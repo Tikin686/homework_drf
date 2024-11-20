@@ -1,7 +1,11 @@
 import django_filters
 from users.models import Payment
 
+
 class PaymentFilter(django_filters.FilterSet):
+    """
+    Фильтр модели Payment
+    """
     payment_date = django_filters.DateFilter()
     paid_course = django_filters.NumberFilter()
     separately_paid_lesson = django_filters.NumberFilter()
