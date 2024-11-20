@@ -9,6 +9,7 @@ class Course(models.Model):
         upload_to="materials/preview", **NULLABLE, verbose_name="Превью курса"
     )
     description = models.CharField(max_length=300, verbose_name="Описание курса")
+    owner = models.ForeignKey("users.User", on_delete=models.SET_NULL, **NULLABLE, verbose_name="Владелец")
 
     def __str__(self):
         return self.title
@@ -28,6 +29,7 @@ class Lesson(models.Model):
         upload_to="materials/preview", **NULLABLE, verbose_name="Превью урока"
     )
     video_reference = models.URLField(**NULLABLE, verbose_name="Ссылка на видео")
+    owner = models.ForeignKey("users.User", on_delete=models.SET_NULL, **NULLABLE, verbose_name="Владелец")
 
     def __str__(self):
         return self.title
