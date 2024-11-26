@@ -28,7 +28,7 @@ class Lesson(models.Model):
     preview = models.ImageField(
         upload_to="materials/preview", **NULLABLE, verbose_name="Превью урока"
     )
-    video_reference = models.URLField(**NULLABLE, verbose_name="Ссылка на видео")
+    video_url = models.URLField(**NULLABLE, verbose_name="Ссылка на видео")
     owner = models.ForeignKey("users.User", on_delete=models.SET_NULL, **NULLABLE, verbose_name="Владелец")
 
     def __str__(self):
