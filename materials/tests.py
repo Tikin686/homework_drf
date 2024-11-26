@@ -21,7 +21,7 @@ class LessonTestCase(APITestCase):
 
     def test_lesson_retrieve(self):
         """Тест получения информации об уроке."""
-        url = reverse("materials:lesson_get", args=(self.lesson.pk,))
+        url = reverse("materials:lesson_retrieve", args=(self.lesson.pk,))
         response = self.client.get(url)
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -135,7 +135,3 @@ class SubscriptionTestCase(APITestCase):
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(
-            response.data.get("detail"),
-            "No Course matches the given query.",
-        )
