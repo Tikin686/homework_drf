@@ -14,12 +14,11 @@ def create_product(name):
 def create_price(price, name):
     """Создает цену в stripe"""
     product_id = create_product(name).id
-    response = stripe.Price.create(
+    return stripe.Price.create(
         currency="rub",
         unit_amount=int(price * 100),
         product=product_id
     )
-    return response
 
 
 def create_session(price, name):
