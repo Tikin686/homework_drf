@@ -7,7 +7,7 @@ from users.models import Payment, User
 from users.serializers import PaymentSerializer, UserSerializer
 from rest_framework.permissions import AllowAny
 from materials.models import Course
-from users.services import create_session
+from users.services import create_session, create_price, create_product
 
 
 class PaymentViewSet(viewsets.ModelViewSet):
@@ -51,3 +51,20 @@ class UserCreateAPIView(CreateAPIView):
         user = serializer.save(is_active=True)
         user.set_password(user.password)
         user.save()
+
+
+class PaymentCreateAPIView(CreateAPIView):
+    """
+    API view для создания нового платежа.
+    """
+
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+        price = create_price(payment.amount)
+        session_id, link = create_session(price)
+        payment.session_id = session_id
+        payment.link = link
+        payment.save()
