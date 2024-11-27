@@ -21,11 +21,12 @@ def create_price(price, name):
     )
     return response
 
+
 def create_session(price, name):
     """Создает сессию в Stripe и возвращает ID и URL сессии"""
     session = stripe.checkout.Session.create(
         success_url="http://127.0.0.1:8000/courses/",
-        line_items=[{"price": create_price(price, name), "quantity": 1}],
+        line_items=[{"price": price.get("id"), "name": name.get("id"), "quantity": 2}],
         mode="payment",
     )
     return session.id, session.url
