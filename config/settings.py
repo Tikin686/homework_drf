@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "materials",
     "drf_yasg",
     "corsheaders"
+    "django_celery_beat"
 ]
 
 MIDDLEWARE = [

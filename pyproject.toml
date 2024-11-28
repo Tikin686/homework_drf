@@ -24,6 +24,7 @@ forex-python = "^1.8"
 celery = "^5.4.0"
 redis = "^5.2.0"
 eventlet = "^0.38.0"
+django-celery-beat = "^2.7.0"
 
 
 [build-system]
