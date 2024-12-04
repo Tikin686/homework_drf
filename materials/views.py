@@ -11,6 +11,9 @@ from materials.paginators import MaterialsPaginator
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from materials.tasks import send_info
+from rest_framework.generics import (CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView)
+from rest_framework.viewsets import ModelViewSet
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -24,6 +27,12 @@ class CourseViewSet(viewsets.ModelViewSet):
             return CourseDetailSerializer
         return CourseSerializer
 
+    def perform_create(self, serializer):
+        """Этот метод срабатывает, когда пользователь создает новый курс через API."""
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
+
     def get_permissions(self):
         if self.action in ["create", "destroy"]:
             self.permission_classes = (~IsModer,)
@@ -32,6 +41,16 @@ class CourseViewSet(viewsets.ModelViewSet):
         elif self.action == "destroy":
             self.permission_classes = (~IsModer | IsOwner,)
         return super().get_permissions()
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+
+        emails = []
+        subscriptions = Subscription.objects.filter(course=course)
+        for s in subscriptions:
+            emails.append(s.user.email)
+
+        send_info.delay(course.id, emails, f'Изменен курс {course.title}')
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
@@ -70,7 +89,6 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 
 class SubscriptionView(APIView):
-
 
     def post(self, request, course_id, *args, **kwargs):
         user = request.user  # Получаем текущего пользователя
